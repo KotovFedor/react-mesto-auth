@@ -1,0 +1,12 @@
+.popup__set-bottom {
+  position: absolute;
+  top: 168px;
+  left: 36px;
+}
+
+@media screen and (max-width: 619px) {
+  .popup__set-bottom {
+    top: 175px;
+    left: 22px;
+  }
+}

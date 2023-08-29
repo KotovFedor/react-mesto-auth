@@ -1,0 +1,12 @@
+.popup__set-top {
+  position: absolute;
+  top: 100px;
+  left: 36px;
+}
+
+@media screen and (max-width: 619px) {
+  .popup__set-top {
+    top: 105px;
+    left: 22px;
+  }
+}

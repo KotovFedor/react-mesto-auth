@@ -1,0 +1,15 @@
+.profile__edit-image {
+  width: 10px;
+  height: 10px;
+}
+
+@media screen and (max-width: 619px) {
+  .profile__edit-image {
+    width: 7.5px;
+    height: 7.5px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}

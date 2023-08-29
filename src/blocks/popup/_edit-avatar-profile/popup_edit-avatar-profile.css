@@ -1,0 +1,10 @@
+.popup_edit-avatar-profile
+  .popup__container.popup__container-edit-profile-form {
+  height: 272px;
+}
+
+.popup_edit-avatar-profile
+  .popup__container.popup__container-edit-profile-form
+  .popup__set.popup__set-bottom {
+  top: 111px;
+}

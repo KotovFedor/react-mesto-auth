@@ -1,0 +1,12 @@
+.link {
+  text-decoration: none;
+  cursor: pointer;
+  width: 0;
+  display: block;
+}
+
+@media screen and (max-width: 619px) {
+  .link {
+    margin-left: 27px;
+  }
+}
