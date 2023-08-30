@@ -23,4 +23,4 @@
 
 ## Ссылка на проект:
 
-[GithubPages](https://kotovfedor.github.io/react-mesto-auth.html)
+[GithubPages](https://kotovfedor.github.io/react-mesto-auth/index.html)
