@@ -31,9 +31,7 @@ export async function authorization(password, email) {
       email: email,
     }),
   });
-  return await (res.ok
-    ? res.json()
-    : Promise.reject(`${res.status} ${res.statusText}`));
+  return getResponseData(res);
 }
 
 export async function getUserData(token) {
@@ -58,7 +56,5 @@ export async function auth(password, email) {
       email: email,
     }),
   });
-  return await (res.ok
-    ? res.json()
-    : Promise.reject(`${res.status} ${res.statusText}`));
+  return getResponseData(res);
 }
