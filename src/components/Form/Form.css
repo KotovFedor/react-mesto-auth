@@ -1,9 +1,3 @@
-/* .popup__form {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-} */
-
 .popup__submit {
   display: block;
   width: 358px;
@@ -30,8 +24,6 @@
 }
 
 .popup__submit_loading {
-  /* background-image: url(../../image/load.gif); */
-  background-position: center;
   background-repeat: no-repeat;
   background-size: 80px 80px;
 }
@@ -59,7 +51,6 @@
 }
 
 .login__button_loading {
-  /* background-image: url(../../image/load.gif); */
   background-position: center;
   background-repeat: no-repeat;
   background-size: 80px 80px;

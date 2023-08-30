@@ -3,6 +3,7 @@ import { memo } from "react";
 import Register from "../Register/Register";
 import Login from "../Login/Login";
 import HomePage from "../HomePage/HomePage";
+import "./Main.css";
 
 const Main = memo(
   ({
@@ -15,33 +16,37 @@ const Main = memo(
     onCardLike,
     cards,
     isLoading,
-    isCheckToken,
-    handleLogin,
-    handleRegister,
+    setIsSend,
+    setLoggedIn,
+    setIsSuccessful,
+    setIsError,
   }) => {
-    // const currentUser = useContext(CurrentUserContext)
-    // console.log('render main')
     return (
       <main className="main">
-        {isCheckToken ? (
-          <h2>Привет</h2>
+        {name === "main" ? (
+          <HomePage
+            openCard={openCard}
+            openProfile={openProfile}
+            openAvatar={openAvatar}
+            openDelete={openDelete}
+            onCardClick={onCardClick}
+            onCardLike={onCardLike}
+            cards={cards}
+            isLoading={isLoading}
+          />
+        ) : name === "signup" ? (
+          <Register
+            setIsSend={setIsSend}
+            setIsSuccessful={setIsSuccessful}
+            setIsError={setIsError}
+          />
         ) : (
-          {
-            main: (
-              <HomePage
-                openCard={openCard}
-                openProfile={openProfile}
-                openAvatar={openAvatar}
-                openDelete={openDelete}
-                onCardClick={onCardClick}
-                onCardLike={onCardLike}
-                cards={cards}
-                isLoading={isLoading}
-              />
-            ),
-            signup: <Register name={name} handleRegister={handleRegister} />,
-            signin: <Login name={name} handleLogin={handleLogin} />,
-          }[name]
+          <Login
+            setIsSend={setIsSend}
+            setLoggedIn={setLoggedIn}
+            setIsSuccessful={setIsSuccessful}
+            setIsError={setIsError}
+          />
         )}
       </main>
     );

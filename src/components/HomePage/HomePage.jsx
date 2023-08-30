@@ -12,7 +12,6 @@ export default function Main({
   onCardClick,
   openDelete,
   cards,
-  isLoading,
 }) {
   const currentUser = useContext(CurrentUserContext);
 

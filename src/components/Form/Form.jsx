@@ -16,28 +16,31 @@ export default function Form({
   return (
     <form noValidate name={name} onSubmit={onSubmit}>
       {children}
-      {
-        {
-          login: (
-            <button
-              className={`login__button  ${
-                isValid ? "" : "login__button_disable"
-              }`}
-              disabled={isSend || !isValid}
-            ></button>
-          ),
-          popup: (
-            <button
-              className={`popup__submit ${
-                isSend ? "popup__submit_loading" : ""
-              } ${isValid ? "" : "popup__submit_disable"}`}
-              disabled={isSend || !isValid}
-            >
-              {isSend ? "" : titleButton || "Сохранить"}
-            </button>
-          ),
-        }[`${name === "signin" || name === "signup" ? "login" : "popup"}`]
-      }
+      <button
+        type="submit"
+        className={`${
+          name === "signin" || name === "signup"
+            ? "login__button"
+            : "popup__submit"
+        }
+          ${
+            isSend
+              ? name === "signin" || name === "signup"
+                ? "login__button_loading"
+                : "popup__submit_loading"
+              : ""
+          }
+          ${
+            isValid
+              ? ""
+              : name === "signin" || name === "signup"
+              ? "login__button_disable"
+              : "popup__submit_disable"
+          }`}
+        disabled={isSend}
+      >
+        {isSend ? "" : titleButton || "Сохранить"}
+      </button>
     </form>
   );
 }

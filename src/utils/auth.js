@@ -6,8 +6,8 @@ function getResponseData(res) {
     : Promise.reject(`${res.status} ${res.statusText}`);
 }
 
-export function registration(password, email) {
-  return fetch(`${baseUrl}/signup`, {
+export async function registration(password, email) {
+  const res = await fetch(`${baseUrl}/signup`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -16,11 +16,12 @@ export function registration(password, email) {
       password: password,
       email: email,
     }),
-  }).then((res) => getResponseData(res));
+  });
+  return getResponseData(res);
 }
 
-export function authorization(password, email) {
-  return fetch(`${baseUrl}/signin`, {
+export async function authorization(password, email) {
+  const res = await fetch(`${baseUrl}/signin`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -29,15 +30,35 @@ export function authorization(password, email) {
       password: password,
       email: email,
     }),
-  }).then((res) => getResponseData(res));
+  });
+  return await (res.ok
+    ? res.json()
+    : Promise.reject(`${res.status} ${res.statusText}`));
 }
 
-export function getUserData(token) {
-  return fetch(`${baseUrl}/users/me`, {
+export async function getUserData(token) {
+  const res = await fetch(`${baseUrl}/users/me`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-  }).then((res) => getResponseData(res));
+  });
+  return getResponseData(res);
+}
+
+export async function auth(password, email) {
+  const res = await fetch(`${baseUrl}/signup`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      password: password,
+      email: email,
+    }),
+  });
+  return await (res.ok
+    ? res.json()
+    : Promise.reject(`${res.status} ${res.statusText}`));
 }

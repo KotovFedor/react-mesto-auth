@@ -13,7 +13,7 @@ import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import SendContext from "../contexts/SendContext";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 import ProtectedMain from "./ProtectedMain/ProtectedMain.jsx";
-import { registration, authorization, getUserData } from "../utils/auth";
+import { getUserData } from "../utils/auth";
 import InfoTooltip from "./InfoTooltip/InfoTooltip";
 
 function App() {
@@ -24,30 +24,29 @@ function App() {
   const [isImagePopupOpen, setIsImagePopup] = useState(false);
   const [isDeletePopupOpen, setDeletePopupOpen] = useState(false);
   const [isSend, setIsSend] = useState(false);
-  // const [isImagePopupOpen, setImagePopup] = useState(false);
-  const [isResultPopupOpen, setIsResultPopupOpen] = useState(false);
 
   const [currentUser, setCurrentUser] = useState({});
   const [userEmail, setUserEmail] = useState("");
+  const [dataUser, setDataUser] = useState("");
 
   const [cards, setCards] = useState([]);
   const [isLoadingCards, setIsLoadingCards] = useState(true);
   const [deleteCardId, setDeleteCardId] = useState("");
 
   const [isSuccessful, setIsSuccessful] = useState(false);
-  // const [isError, setIsError] = useState(false)
+
   const [loggedIn, setLoggedIn] = useState(false);
   const [isCheckToken, setIsCheckToken] = useState(true);
+  const [isError, setIsError] = useState(false);
 
   const navigate = useNavigate();
-  //переменная состояния попапов
+
   const isOpen =
     isEditProfilePopupOpen ||
     isAddPlacePopupOpen ||
     isEditAvatarPopupOpen ||
     isDeletePopupOpen ||
-    isImagePopupOpen ||
-    isResultPopupOpen;
+    isImagePopupOpen;
 
   const closeAllPopups = useCallback(() => {
     setIsEditProfilePopupOpen(false);
@@ -55,16 +54,35 @@ function App() {
     setIsEditAvatarPopupOpen(false);
     setDeletePopupOpen(false);
     setIsImagePopup(false);
+    setIsError(false);
     setIsSuccessful(false);
   }, []);
 
-  // const setStatestoClosePopups = useCallback(() => {
-  //   setIsEditAvatarPopupOpen(false);
-  //   setIsEditProfilePopupOpen(false);
-  //   setIsAddPlacePopupOpen(false);
-  //   setIsImagePopup(false);
-  //   setDeletePopupOpen(false);
-  // }, []);
+  useEffect(() => {
+    function closePopupsByEsc(evt) {
+      if (evt.key === "Escape") {
+        closeAllPopups();
+      }
+    }
+    if (isOpen) {
+      document.addEventListener("keydown", closePopupsByEsc);
+      return () => {
+        document.removeEventListener("keydown", closePopupsByEsc);
+      };
+    }
+  }, [isOpen, closeAllPopups]);
+
+  useEffect(() => {
+    if (localStorage.jwt) {
+      getUserData(localStorage.jwt)
+        .then((res) => {
+          setDataUser(res.data.email);
+          setLoggedIn(true);
+          navigate("/");
+        })
+        .catch((err) => console.log(`Ошибка авторизации ${err}`));
+    }
+  }, [navigate]);
 
   // const closePopupByEscape = useCallback(
   //   (evt) => {
@@ -89,29 +107,20 @@ function App() {
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
-    // setEventListenerForDocument();
   }
 
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
-    // setEventListenerForDocument();
   }
-
-  // function handleAddPlaceClick() {
-  //   setIsAddPlacePopupOpen(true);
-  //   setEventListenerForDocument();
-  // }
 
   function handleCardClick(card) {
     setSelectedCard(card);
     setIsImagePopup(true);
-    // setEventListenerForDocument();
   }
 
   function handleDeletePopupClick(cardId) {
     setDeleteCardId(cardId);
     setDeletePopupOpen(true);
-    // setEventListenerForDocument();
   }
 
   // function closeAllPopupsByOverLay(evt) {
@@ -120,24 +129,6 @@ function App() {
   //     document.removeEventListener("keydown", closePopupByEscape);
   //   }
   // }
-
-  // function setEventListenerForDocument() {
-  //   document.addEventListener("keydown", closePopupByEscape);
-  // }
-
-  useEffect(() => {
-    function closePopupsByEsc(evt) {
-      if (evt.key === "Escape") {
-        closeAllPopups();
-      }
-    }
-    if (isOpen) {
-      document.addEventListener("keydown", closePopupsByEsc);
-      return () => {
-        document.removeEventListener("keydown", closePopupsByEsc);
-      };
-    }
-  }, [isOpen, closeAllPopups]);
 
   useEffect(() => {
     setIsLoadingCards(true);
@@ -160,9 +151,7 @@ function App() {
           setLoggedIn(true);
           setIsCheckToken(false);
         })
-        .catch((err) =>
-          console.error(`Ошибкак авторизации при повторном входе ${err}`)
-        );
+        .catch((err) => console.error(`Ошибка авторизации ${err}`));
     } else {
       setLoggedIn(false);
       setIsCheckToken(false);
@@ -192,22 +181,6 @@ function App() {
       })
       .finally(() => setIsSend(false));
   }
-
-  // function handleUpdateUser(dataUser, reset) {
-  //   setIsSend(true);
-  //   api
-  //     .sendUserInfo(dataUser)
-  //     .then((res) => {
-  //       setCurrentUser(res);
-  //       closeAllPopups();
-  //       reset();
-  //       setIsSend(false);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     })
-  //     .finally(() => setIsSend(false));
-  // }
 
   function handleUpdateAvatar(dataUser, reset) {
     setIsSend(true);
@@ -241,47 +214,11 @@ function App() {
       .finally(() => setIsSend(false));
   }
 
-  function handleLogin(password, email) {
-    setIsSend(true);
-    authorization(password, email)
-      .then((res) => {
-        console.log(res);
-        localStorage.setItem("jwt", res.token);
-        setLoggedIn(true);
-        window.scrollTo(0, 0);
-        navigate("/");
-      })
-      .catch((err) => {
-        setIsResultPopupOpen(true);
-        setIsSuccessful(false);
-        console.error(`Ошибка при авторизации ${err}`);
-      })
-      .finally(() => setIsSend(false));
-  }
-
-  function handleRegister(password, email) {
-    setIsSend(true);
-    registration(password, email)
-      .then(() => {
-        setIsResultPopupOpen(true);
-        setIsSuccessful(true);
-        window.scrollTo(0, 0);
-        navigate("/sign-in");
-      })
-      .catch((err) => {
-        setIsResultPopupOpen(true);
-        setIsSuccessful(false);
-        console.error(`Ошибка при регистрации ${err}`);
-      })
-      .finally(() => setIsSend(false));
-  }
-
   const handleUpdateUser = useCallback(
     (userEmail) => {
-      function makeRequest() {
-        return api.sendUserInfo(userEmail).then((res) => {
-          setCurrentUser(res);
-        });
+      async function makeRequest() {
+        const res = await api.sendUserInfo(userEmail);
+        setCurrentUser(res);
       }
       handleSubmit(makeRequest, "Ошибка при редактировании профиля");
     },
@@ -309,6 +246,7 @@ function App() {
                   loggedIn={loggedIn}
                   setLoggedIn={setLoggedIn}
                   isCheckToken={isCheckToken}
+                  dataUser={dataUser}
                 />
               }
             />
@@ -319,8 +257,9 @@ function App() {
                   <Header name="signup" />
                   <Main
                     name="signup"
-                    isCheckToken={isCheckToken}
-                    handleRegister={handleRegister}
+                    setIsSend={setIsSend}
+                    setIsSuccessful={setIsSuccessful}
+                    setIsError={setIsError}
                   />
                 </>
               }
@@ -328,21 +267,19 @@ function App() {
             <Route
               path="/sign-in"
               element={
-                loggedIn ? (
-                  <Navigate to={"/"} />
-                ) : (
-                  <>
-                    <Header name="signin" />
-                    <Main
-                      name="signin"
-                      isCheckToken={isCheckToken}
-                      handleLogin={handleLogin}
-                    />
-                  </>
-                )
+                <>
+                  <Header name="signin" />
+                  <Main
+                    name="signin"
+                    setLoggedIn={setLoggedIn}
+                    setIsSend={setIsSend}
+                    setIsSuccessful={setIsSuccessful}
+                    setIsError={setIsError}
+                  />
+                </>
               }
             />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </SendContext.Provider>
 
@@ -385,11 +322,12 @@ function App() {
           />
         </SendContext.Provider>
         <InfoTooltip
-          name="result"
-          isSuccessful={isSuccessful}
-          isOpen={isResultPopupOpen}
+          name="success"
+          isOpen={isSuccessful}
           onClose={closeAllPopups}
         />
+
+        <InfoTooltip name="error" isOpen={isError} onClose={closeAllPopups} />
       </div>
     </CurrentUserContext.Provider>
   );

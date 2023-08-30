@@ -1,18 +1,32 @@
 import Enter from "../Enter/Enter";
 import useFormValidation from "../../utils/useFormValidation";
 import Input from "../Input/Input";
+import { useNavigate } from "react-router-dom";
+import { authorization } from "../../utils/auth";
 
-export default function Login({ name, handleLogin }) {
+export default function Login({ setIsSend, setLoggedIn, setIsError }) {
   const { values, errors, isValid, isInputValid, handleChange } =
     useFormValidation();
+  const navigate = useNavigate();
 
   function onLogin(evt) {
     evt.preventDefault();
-    handleLogin(values.password, values.email);
+    setIsSend(true);
+    authorization(values.password, values.email)
+      .then((res) => {
+        localStorage.setItem("jwt", res.token);
+        setLoggedIn(true);
+        navigate("/");
+      })
+      .catch((err) => {
+        setIsError(true);
+        console.error(`Ошибкак при авторизации ${err}`);
+      })
+      .finally(() => setIsSend(false));
   }
 
   return (
-    <Enter name={name} onSubmit={onLogin} isValid={isValid}>
+    <Enter name="signin" onSubmit={onLogin} isValid={isValid}>
       <Input
         name="email"
         type="email"
